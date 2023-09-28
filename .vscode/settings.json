@@ -1,6 +1,10 @@
 {
   "files.associations": {
     "cms.h": "c",
-    "kms.h": "c"
+    "kms.h": "c",
+    "nitro_enclaves.h": "c",
+    "attestation.h": "c",
+    "stdlib.h": "c",
+    "stdio.h": "c"
   }
 }
