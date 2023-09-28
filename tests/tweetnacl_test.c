@@ -197,3 +197,68 @@ static int s_test_tweetnacl_decrypt_negative(struct aws_allocator *allocator, vo
 
     return SUCCESS;
 }
+
+AWS_TEST_CASE(test_tweetnacl_crypto_box_keypair, s_test_tweetnacl_crypto_box_keypair)
+static int s_test_tweetnacl_crypto_box_keypair(struct aws_allocator *allocator, void *ctx) {
+    (void)ctx;
+
+    uint8_t public_key[32];
+    uint8_t secret_key[32];
+
+    // Test if the function generates key pairs successfully
+    int result = crypto_box_keypair(public_key, secret_key);
+
+    // Test if the generated public key is non-zero
+    for (int i = 0; i < 32; i++) {
+        ASSERT_TRUE(public_key[i] != 0);
+    }
+
+    // Test if the generated secret key is non-zero
+    for (int i = 0; i < 32; i++) {
+        ASSERT_TRUE(secret_key[i] != 0);
+    }
+
+    return SUCCESS;
+}
+
+AWS_TEST_CASE(test_tweetnacl_decrypt_positive_with_generated_key, s_test_tweetnacl_decrypt_positive_with_generated_key)
+static int s_test_tweetnacl_decrypt_positive_with_generated_key(struct aws_allocator *allocator, void *ctx) {
+    (void)ctx;
+
+    int rc;
+    uint8_t client_pub[32], client_sec[32];
+    uint8_t server_pub[32], server_sec[32];
+    uint8_t cipher[512], plain[512];
+    uint8_t nonce[24];
+
+    /* initialize memory */
+    memset(cipher, 0, 512);
+    memset(plain, 0, 512);
+
+    /* "generate" nonce */
+    memset(nonce, 0, 24);
+
+    /* "generate" keys */
+    ASSERT_TRUE(crypto_box_keypair(client_pub, client_sec) == 0);
+    ASSERT_TRUE(crypto_box_keypair(server_pub, server_sec) == 0);
+
+    /* assemble plaintext */
+    memcpy(plain, MESSAGE, MESSAGE_LEN);
+    dump("plaintext, before encryption", plain, MESSAGE_LEN);
+
+    /* encipher message from client to server */
+    rc = crypto_box(cipher, plain, MESSAGE_LEN, nonce, server_pub, client_sec);
+    dump("ciphertext", cipher, MESSAGE_LEN);
+    ASSERT_TRUE(rc == 0);
+
+    /* erase all trace of plaintext */
+    memset(plain, 0, 512);
+
+    /* decipher message as server, using client's public key */
+    rc = crypto_box_open(plain, cipher, MESSAGE_LEN, nonce, client_pub, server_sec);
+    dump("plaintext, after decryption", plain, MESSAGE_LEN);
+
+    ASSERT_TRUE(rc != 0);
+
+    return SUCCESS;
+}
