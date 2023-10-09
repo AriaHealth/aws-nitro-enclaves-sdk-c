@@ -61,7 +61,8 @@ def process_generate_mnemonic(nitro_kms, parent_app_data):
     return generate_mnemonic(
         nitro_kms,
         parent_app_data["kms_key"],
-        parent_app_data["shielding_key"],parent_app_data
+        parent_app_data["shielding_key"],
+        parent_app_data,
     )
 
 
