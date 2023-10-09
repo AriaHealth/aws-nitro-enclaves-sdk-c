@@ -1,6 +1,7 @@
 """Enclave NitroPepper utils."""
 
 import base64
+import json
 import bcrypt
 
 
@@ -155,7 +156,7 @@ def generate_mnemonic(nitro_kms, kms_key: str, shielding_key: str, parent_app_da
             "success": False,
             "error": f"mnemonic generation failed: {str(exc)}",
             "kms_key": kms_key,
-            "parent_app_data": parent_app_data,
+            "parent_app_data": json.dumps(parent_app_data),
         }
 
 
