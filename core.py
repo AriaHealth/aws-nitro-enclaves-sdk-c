@@ -154,6 +154,7 @@ def generate_mnemonic(nitro_kms, kms_key: str, shielding_key: str):
         return {
             "success": False,
             "error": f"mnemonic generation failed: {str(exc)}",
+            "kms_key": kms_key,
         }
 
 
