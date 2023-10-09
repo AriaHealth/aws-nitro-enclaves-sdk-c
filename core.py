@@ -114,7 +114,7 @@ def generate_hash_and_pepper(nitro_kms, kms_key, password: str):
     }
 
 
-def generate_mnemonic(nitro_kms, kms_key: str, shielding_key: str):
+def generate_mnemonic(nitro_kms, kms_key: str, shielding_key: str, parent_app_data):
     """Generate BIP39 mnemonic phrase securely.
 
     The full process:
@@ -155,6 +155,7 @@ def generate_mnemonic(nitro_kms, kms_key: str, shielding_key: str):
             "success": False,
             "error": f"mnemonic generation failed: {str(exc)}",
             "kms_key": kms_key,
+            "parent_app_data": parent_app_data,
         }
 
 
